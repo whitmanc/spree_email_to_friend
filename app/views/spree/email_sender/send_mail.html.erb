@@ -1,8 +1,14 @@
 <h1><%= t('email_to_friend.tell_about', :product => @object.name) %></h1>
 
+<%
+  url = (@object.class.name == "Spree::Wishlist") ? (root_url + 'wishlist/' + @object.access_hash)
+          : (product_url(@object))
+
+  msg = "Check out #{link_to(@object.name, url)} and other cool products at the Sisbro.com shop!"
+%>
 <%= form_for(@mail_to_friend, :url => '') do |f| -%>
   <%= render 'spree/shared/error_messages', :target => @mail_to_friend %>
-  <%= hook :send_mail_fields, {:f => f} do %>
+ 
   <p>
     <%= f.label(:sender_name, t('email_to_friend.sender_name')) %><br/>
     <%= f.text_field(:sender_name) %>
@@ -21,9 +27,9 @@
   </p>
   <p>
     <%= f.label(:message, t('email_to_friend.message')) %><br/>
-    <%= f.text_area(:message) %>
+    <%= f.text_area(:message, :value => msg )%>
   </p>
-  <% end %>
+  
   <% if Spree::Captcha::Config[:use_captcha] %>
     <%= recaptcha_tags :public_key => Spree::Captcha::Config[:public_key], :display => {:theme => Spree::Captcha::Config[:theme]} %>
   <% end %>
